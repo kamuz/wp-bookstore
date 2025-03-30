@@ -3,13 +3,17 @@
  * Plugin Name: Bookstore
  * Description: A plugin to manage books
  * Version: 1.0.2
+ *
+ * @package bookstore
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-add_action( 'init', 'bookstore_register_book_post_type' );
+/**
+ * Register CPT
+ */
 function bookstore_register_book_post_type() {
 	$args = array(
 		'labels'       => array(
@@ -32,8 +36,11 @@ function bookstore_register_book_post_type() {
 
 	register_post_type( 'book', $args );
 }
+add_action( 'init', 'bookstore_register_book_post_type' );
 
-add_action( 'init', 'bookstore_register_genre_taxonomy' );
+/**
+ * Register taxonomy
+ */
 function bookstore_register_genre_taxonomy() {
 	$args = array(
 		'labels'       => array(
@@ -52,16 +59,11 @@ function bookstore_register_genre_taxonomy() {
 
 	register_taxonomy( 'genre', 'book', $args );
 }
+add_action( 'init', 'bookstore_register_genre_taxonomy' );
 
-add_filter( 'postmeta_form_keys', 'bookstore_add_isbn_to_quick_edit', 10, 2 );
-function bookstore_add_isbn_to_quick_edit( $keys, $post ) {
-	if ( 'book' === $post->post_type ) {
-		$keys[] = 'isbn';
-	}
-	return $keys;
-}
-
-add_action( 'admin_menu', 'bookstore_add_booklist_submenu', 11 );
+/**
+ * Add submenu to Books CPT menu
+ */
 function bookstore_add_booklist_submenu() {
 	add_submenu_page(
 		'edit.php?post_type=book',
@@ -72,7 +74,11 @@ function bookstore_add_booklist_submenu() {
 		'bookstore_render_booklist'
 	);
 }
+add_action( 'admin_menu', 'bookstore_add_booklist_submenu', 11 );
 
+/**
+ * Render booklist in admin
+ */
 function bookstore_render_booklist() {
 	?>
 	<div class="wrap">
@@ -106,19 +112,16 @@ function bookstore_render_booklist() {
 	<?php
 }
 
+/**
+ * Add CSS and JavaScript files
+ */
 function bookstore_enqueue_scripts() {
 	$post = get_post();
 	if ( 'book' !== $post->post_type ) {
 		return;
 	}
-	wp_enqueue_style(
-		'bookstore-style',
-		plugins_url() . '/bookstore/bookstore.css'
-	);
-	wp_enqueue_script(
-		'bookstore-script',
-		plugins_url() . '/bookstore/bookstore.js',
-	);
+	wp_enqueue_style( 'bookstore-style', plugins_url() . '/bookstore/bookstore.css', null, '1.0.0' );
+	wp_enqueue_script( 'bookstore-script', plugins_url() . '/bookstore/bookstore.js', null, '1.0.0', true );
 }
 add_action( 'wp_enqueue_scripts', 'bookstore_enqueue_scripts' );
 
@@ -126,12 +129,6 @@ add_action( 'wp_enqueue_scripts', 'bookstore_enqueue_scripts' );
  * Add admin CSS and JavaScript
  */
 function bookstore_admin_enqueue_scripts() {
-	wp_enqueue_script(
-		'bookstore-admin-script',
-		plugins_url() . '/bookstore/admin-bookstore.js',
-		array( 'wp-api', 'wp-api-fetch' ),
-		'1.0.0',
-		true
-	);
+	wp_enqueue_script( 'bookstore-admin-script', plugins_url() . '/bookstore/admin-bookstore.js', array( 'wp-api', 'wp-api-fetch' ), '1.0.0', true );
 }
 add_action( 'admin_enqueue_scripts', 'bookstore_admin_enqueue_scripts' );
