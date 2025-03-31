@@ -50,3 +50,31 @@ if (submitBookButton) {
         });
     });
 }
+
+function updateBook() {
+    const id = document.getElementById('bookstore-book-id').value;
+    const newTitle = document.getElementById('bookstore-book-title').value;
+    const newContent = document.getElementById('bookstore-book-content').value;
+
+    wp.apiFetch({
+        path: '/wp/v2/books/' + id,
+        method: 'POST',
+        data: {
+            title: newTitle,
+            content: newContent
+        },
+    }).then((result) => {
+        alert('Book Updated!');
+    });
+}
+
+function deleteBook() {
+    const id = document.getElementById('bookstore-book-id').value;
+
+    wp.apiFetch({
+        path: '/wp/v2/books/' + id,
+        method: 'DELTE'
+    }).then((result) => {
+        alert('Book Deleted!');
+    });
+}
