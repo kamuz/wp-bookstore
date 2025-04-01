@@ -62,6 +62,23 @@ function bookstore_register_genre_taxonomy() {
 add_action( 'init', 'bookstore_register_genre_taxonomy' );
 
 /**
+ * Register location menu
+ */
+function wp_learn_register_meta() {
+	register_meta(
+		'post',
+		'location',
+		array(
+			'single'       => true,
+			'type'         => 'string',
+			'default'      => '',
+			'show_in_rest' => true,
+		)
+	);
+}
+add_action( 'init', 'wp_learn_register_meta' );
+
+/**
  * Add submenu to Books CPT menu
  */
 function bookstore_add_booklist_submenu() {
