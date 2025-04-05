@@ -31,10 +31,25 @@ function bookstore_register_book_post_type() {
 		'has_archive'  => true,
 		'show_in_rest' => true,
 		'rest_base'    => 'books',
-		'supports'     => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt' ),
+		'supports'     => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields' ),
 	);
 
 	register_post_type( 'book', $args );
+
+	/**
+	 * Register isbn to book as meta
+	 */
+	register_meta(
+		'post',
+		'isbn',
+		array(
+			'single'         => true,
+			'type'           => 'string',
+			'default'        => '',
+			'show_in_rest'   => true,
+			'object_subtype' => 'book',
+		)
+	);
 }
 add_action( 'init', 'bookstore_register_book_post_type' );
 
