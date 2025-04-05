@@ -164,3 +164,43 @@ function bookstore_admin_enqueue_scripts() {
 	wp_enqueue_script( 'bookstore-admin-script', plugins_url() . '/bookstore/admin-bookstore.js', array( 'wp-api', 'wp-api-fetch' ), '1.0.0', true );
 }
 add_action( 'admin_enqueue_scripts', 'bookstore_admin_enqueue_scripts' );
+
+/**
+ * Adding a custom field as a top-level field
+ */
+function bookstore_add_rest_fields() {
+	register_rest_field(
+		'book',
+		'isbn',
+		array(
+			'get_callback'    => 'bookstore_rest_get_isbn',
+			'update_callback' => 'bookstore_rest_update_isbn',
+			'schema'          => array(
+				'description' => __( 'The ISBN of the book' ),
+				'type'        => 'string',
+			),
+		)
+	);
+}
+add_action( 'rest_api_init', 'bookstore_add_rest_fields' );
+
+/**
+ * Get ISBN post meta
+ *
+ * @param  array $book The book post object, containing post data.
+ * @return string The ISBN value from the post meta.
+ */
+function bookstore_rest_get_isbn( $book ) {
+	return get_post_meta( $book['id'], 'isbn', true );
+}
+
+/**
+ * Update ISBN post meta
+ *
+ * @param string $value The ISBN value to be updated.
+ * @param object $book The book post object, containing post data.
+ * @return bool True if the ISBN was successfully updated, false otherwise.
+ */
+function bookstore_rest_update_isbn( $value, $book ) {
+	return update_post_meta( $book->ID, 'isbn', $value );
+}
